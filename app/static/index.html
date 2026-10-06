@@ -3,32 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FUNDIT — AI Mutual Fund Decision Engine</title>
-  <meta name="description" content="Evidence-driven AI mutual fund decision support. Natural-language queries. Deterministic ranking. Grounded Gemini explanations." />
+  <title>FUNDIT</title>
+  <meta name="description" content="Evidence-based mutual fund decision support." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
   <style>
     /* ── Design tokens ─────────────────────────────────────────────── */
     :root {
-      --bg:          #0d0f14;
-      --surface:     #151821;
-      --surface2:    #1c1f2b;
-      --border:      #252836;
-      --border-hi:   #353a4f;
-      --accent:      #6c63ff;
-      --accent-dim:  #3d396b;
-      --accent-glow: rgba(108,99,255,.18);
-      --green:       #34d399;
-      --amber:       #fbbf24;
-      --red:         #f87171;
-      --blue:        #60a5fa;
-      --muted:       #6b7280;
-      --text:        #e2e8f0;
-      --text-dim:    #94a3b8;
-      --text-faint:  #475569;
-      --radius:      12px;
-      --radius-sm:   8px;
-      --shadow:      0 4px 32px rgba(0,0,0,.45);
+      --bg:          #0B0B0B;
+      --surface:     #121212;
+      --surface2:    #181818;
+      --border:      #2A2A2A;
+      --border-hi:   #404040;
+      
+      /* Restrained neutral/off-white accent */
+      --accent:      #EDEDED;
+      --accent-dim:  #666666;
+      
+      --text:        #E0E0E0;
+      --text-dim:    #999999;
+      --text-faint:  #666666;
+      
+      --radius:      4px;
+      --radius-sm:   2px;
+      
       --font:        'Inter', system-ui, sans-serif;
       --mono:        'JetBrains Mono', monospace;
     }
@@ -42,78 +40,36 @@
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── Layout ───────────────────────────────────────────────────── */
-    .page { max-width: 820px; margin: 0 auto; padding: 0 20px 80px; }
+    .page { max-width: 680px; margin: 0 auto; padding: 60px 20px 100px; }
 
     /* ── Header ───────────────────────────────────────────────────── */
     header {
-      padding: 52px 0 36px;
-      text-align: center;
-    }
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .logo-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, var(--accent), #8b83ff);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 0 20px var(--accent-glow);
+      margin-bottom: 60px;
     }
     .logo-name {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff 40%, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
     }
     .tagline {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-dim);
-      max-width: 520px;
-      margin: 0 auto;
-      line-height: 1.5;
-    }
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .badge {
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border-hi);
-      color: var(--text-dim);
-      background: var(--surface);
     }
 
-    /* ── Query card ───────────────────────────────────────────────── */
-    .query-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      margin-top: 32px;
-      box-shadow: var(--shadow);
+    /* ── Query ────────────────────────────────────────────────────── */
+    .query-section {
+      margin-bottom: 40px;
     }
     .query-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: .8px;
+      font-size: 14px;
+      color: var(--text);
       margin-bottom: 12px;
     }
     .query-input-wrap {
@@ -121,65 +77,57 @@
     }
     textarea#query-input {
       width: 100%;
-      min-height: 90px;
-      background: var(--surface2);
-      border: 1px solid var(--border-hi);
-      border-radius: var(--radius-sm);
+      min-height: 120px;
+      background: var(--bg);
+      border: 1px solid var(--border);
       color: var(--text);
       font-family: var(--font);
       font-size: 15px;
-      padding: 14px 16px;
+      padding: 16px;
       resize: vertical;
       outline: none;
       transition: border-color .2s;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     textarea#query-input::placeholder { color: var(--text-faint); }
-    textarea#query-input:focus { border-color: var(--accent); }
+    textarea#query-input:focus { border-color: var(--accent-dim); }
 
     .query-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
     .char-count {
       font-size: 12px;
       color: var(--text-faint);
     }
-    .char-count.warn { color: var(--amber); }
-
+    
     #submit-btn {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
       background: var(--accent);
-      color: #fff;
+      color: #000;
       font-family: var(--font);
       font-size: 14px;
-      font-weight: 600;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 10px 22px;
+      font-weight: 500;
+      border: 1px solid var(--accent);
+      padding: 8px 24px;
       cursor: pointer;
-      transition: background .15s, transform .1s, box-shadow .15s;
-      box-shadow: 0 0 0 0 var(--accent-glow);
+      transition: opacity .15s;
     }
     #submit-btn:hover:not(:disabled) {
-      background: #7c74ff;
-      box-shadow: 0 0 16px var(--accent-glow);
+      opacity: 0.9;
     }
-    #submit-btn:active:not(:disabled) { transform: scale(.97); }
     #submit-btn:disabled {
-      opacity: .5;
+      opacity: 0.5;
       cursor: not-allowed;
     }
     .btn-spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.3);
-      border-top-color: #fff;
+      width: 14px; height: 14px;
+      border: 1.5px solid rgba(0,0,0,.3);
+      border-top-color: #000;
       border-radius: 50%;
       animation: spin .7s linear infinite;
       display: none;
@@ -187,421 +135,241 @@
     #submit-btn.loading .btn-spinner { display: block; }
     #submit-btn.loading .btn-text { display: none; }
 
-    /* ── Example queries ─────────────────────────────────────────── */
+    /* ── Examples ─────────────────────────────────────────────────── */
     .examples-label {
       font-size: 12px;
       color: var(--text-faint);
-      margin: 16px 0 8px;
+      margin-top: 32px;
+      margin-bottom: 8px;
     }
     .examples {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      flex-direction: column;
+      gap: 6px;
     }
-    .example-chip {
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--border-hi);
+    .example-link {
+      font-size: 13px;
       color: var(--text-dim);
-      background: var(--surface2);
-      cursor: pointer;
-      transition: border-color .15s, color .15s;
+      background: none;
+      border: none;
       text-align: left;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      transition: color .2s;
     }
-    .example-chip:hover {
-      border-color: var(--accent-dim);
+    .example-link:hover {
       color: var(--text);
+      text-decoration: underline;
     }
 
-    /* ── Progress stage display ─────────────────────────────────── */
+    /* ── Progress ─────────────────────────────────────────────────── */
     #progress-panel {
       display: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      margin-top: 24px;
-      animation: fadeIn .3s ease;
-    }
-    .progress-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      margin-bottom: 20px;
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
     }
     .stages {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
     .stage {
       display: flex;
       align-items: center;
-      gap: 14px;
-      opacity: .35;
-      transition: opacity .3s;
-    }
-    .stage.active { opacity: 1; }
-    .stage.done   { opacity: .6; }
-    .stage-icon {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: var(--surface2);
-      border: 1px solid var(--border-hi);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .stage.active .stage-icon {
-      border-color: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-    .stage.done .stage-icon { background: var(--accent-dim); border-color: var(--accent-dim); }
-    .stage-pulse {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 1.2s ease-in-out infinite;
-      display: none;
-      flex-shrink: 0;
-    }
-    .stage.active .stage-pulse { display: block; }
-    .stage-text { font-size: 14px; color: var(--text-dim); }
-    .stage.active .stage-text { color: var(--text); font-weight: 500; }
-
-    /* ── Error banner ─────────────────────────────────────────────── */
-    #error-panel {
-      display: none;
-      background: rgba(248,113,113,.08);
-      border: 1px solid rgba(248,113,113,.3);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin-top: 24px;
-      animation: fadeIn .3s ease;
-    }
-    #error-panel .err-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--red);
-      margin-bottom: 6px;
-    }
-    #error-panel .err-body { font-size: 13px; color: var(--text-dim); }
-
-    /* ── Abstention panel ─────────────────────────────────────────── */
-    #abstention-panel {
-      display: none;
-      background: rgba(251,191,36,.06);
-      border: 1px solid rgba(251,191,36,.3);
-      border-radius: var(--radius);
-      padding: 28px;
-      margin-top: 24px;
-      animation: fadeIn .3s ease;
-    }
-    .abstention-icon { font-size: 32px; margin-bottom: 12px; }
-    .abstention-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--amber);
-      margin-bottom: 8px;
-    }
-    .abstention-reason { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
-
-    /* ── Result card ─────────────────────────────────────────────── */
-    #result-panel {
-      display: none;
-      margin-top: 24px;
-      animation: fadeIn .4s ease;
-    }
-
-    /* Confidence pill */
-    .confidence-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: .6px;
-    }
-    .conf-HIGH   { background: rgba(52,211,153,.12); color: var(--green);  border: 1px solid rgba(52,211,153,.3); }
-    .conf-MEDIUM { background: rgba(251,191,36,.10); color: var(--amber);  border: 1px solid rgba(251,191,36,.3); }
-    .conf-LOW    { background: rgba(248,113,113,.10); color: var(--red);   border: 1px solid rgba(248,113,113,.3); }
-    .conf-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-
-    /* Recommendation hero */
-    .rec-hero {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      margin-bottom: 16px;
-    }
-    .rec-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 20px;
-    }
-    .rec-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
-    .rec-fund-name {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.25;
-    }
-    .rec-summary {
       font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.65;
-      margin-bottom: 20px;
-      padding: 16px;
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
-      border-left: 3px solid var(--accent);
-    }
-
-    /* Score bar */
-    .score-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .score-label { font-size: 12px; color: var(--text-faint); white-space: nowrap; }
-    .score-bar-bg {
-      flex: 1;
-      height: 6px;
-      background: var(--surface2);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .score-bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, var(--accent), #8b83ff);
-      transition: width .8s cubic-bezier(.4,0,.2,1);
-    }
-    .score-value {
-      font-size: 13px;
-      font-weight: 600;
-      font-family: var(--mono);
-      color: var(--text);
-      min-width: 36px;
-      text-align: right;
-    }
-
-    /* Section card */
-    .section-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-    .section-title {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Reasons list */
-    .reason-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .reason-list li {
-      display: flex;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--text-dim);
-      line-height: 1.55;
-    }
-    .reason-list li::before {
-      content: '→';
-      color: var(--accent);
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    /* Tradeoffs */
-    .tradeoff-list { display: flex; flex-direction: column; gap: 10px; }
-    .tradeoff-item {
-      font-size: 13px;
-      color: var(--text-dim);
-      padding: 10px 14px;
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
-      line-height: 1.55;
-    }
-    .tradeoff-item::before { content: '⚖ '; color: var(--amber); }
-
-    /* Key metrics grid */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-    }
-    .metric-chip {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-    }
-    .metric-chip-label { font-size: 11px; color: var(--text-faint); margin-bottom: 4px; }
-    .metric-chip-value { font-size: 17px; font-weight: 700; font-family: var(--mono); color: var(--text); }
-    .metric-chip-value.good  { color: var(--green); }
-    .metric-chip-value.warn  { color: var(--amber); }
-    .metric-chip-value.bad   { color: var(--red); }
-
-    /* Candidates ranking */
-    .candidates-list { display: flex; flex-direction: column; gap: 10px; }
-    .candidate-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-    }
-    .candidate-row.is-winner {
-      border-color: var(--accent-dim);
-      background: rgba(108,99,255,.07);
-    }
-    .cand-rank {
-      font-size: 13px;
-      font-weight: 700;
-      font-family: var(--mono);
       color: var(--text-faint);
-      min-width: 22px;
     }
-    .cand-rank.winner { color: var(--accent); }
-    .cand-name { flex: 1; font-size: 14px; font-weight: 500; }
-    .cand-score {
-      font-size: 13px;
-      font-family: var(--mono);
-      font-weight: 600;
-      color: var(--text-dim);
+    .stage.active { color: var(--text); }
+    .stage.done { color: var(--text-dim); }
+    .stage-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
     }
-    .cand-excluded .cand-name { color: var(--text-faint); text-decoration: line-through; }
+    .stage.active .stage-indicator {
+      background: var(--text);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .stage.done .stage-indicator {
+      background: var(--text-dim);
+    }
 
-    /* Citations */
-    .citations-list { display: flex; flex-direction: column; gap: 10px; }
-    .citation-item {
-      padding: 14px 16px;
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
+    /* ── Error & Abstention ───────────────────────────────────────── */
+    #error-panel, #abstention-panel {
+      display: none;
+      padding: 24px;
+      background: var(--surface);
       border: 1px solid var(--border);
+      margin-top: 40px;
     }
-    .citation-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .citation-id {
-      font-size: 11px;
-      font-weight: 700;
-      font-family: var(--mono);
-      color: var(--accent);
-      background: var(--accent-dim);
-      padding: 2px 7px;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
-    .citation-title {
-      font-size: 13px;
+    .err-title, .abstention-title {
+      font-size: 14px;
       font-weight: 500;
       color: var(--text);
-      line-height: 1.4;
-    }
-    .citation-meta {
-      font-size: 11px;
-      color: var(--text-faint);
       margin-bottom: 8px;
     }
-    .citation-snippet {
-      font-size: 13px;
-      color: var(--text-dim);
-      line-height: 1.55;
-      font-style: italic;
-      border-left: 2px solid var(--border-hi);
-      padding-left: 12px;
+    .err-body, .abstention-reason { 
+      font-size: 14px; 
+      color: var(--text-dim); 
     }
 
-    /* Recommendation text prose */
+    /* ── Result ───────────────────────────────────────────────────── */
+    #result-panel {
+      display: none;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+    }
+    
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 32px 0;
+    }
+
+    .rec-label {
+      font-size: 12px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .rec-fund-name {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    .rec-confidence {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
     .prose {
       font-size: 14px;
       color: var(--text-dim);
-      line-height: 1.7;
+      line-height: 1.6;
+      margin-bottom: 32px;
     }
+
+    /* Key metrics grid (text based) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-label { font-size: 12px; color: var(--text-faint); }
+    .metric-value { font-size: 14px; color: var(--text-dim); font-family: var(--mono); }
+
+    /* Lists */
+    .text-list { 
+      list-style: none; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      margin-bottom: 32px;
+    }
+    .text-list li {
+      font-size: 14px;
+      color: var(--text-dim);
+      padding-left: 16px;
+      position: relative;
+    }
+    .text-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--text-faint);
+    }
+
+    /* Citations */
+    .citations-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 24px; 
+      margin-bottom: 32px;
+    }
+    .citation-item {
+      font-size: 13px;
+    }
+    .citation-meta {
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .citation-id {
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    .citation-snippet {
+      color: var(--text-faint);
+      line-height: 1.5;
+    }
+    .citation-snippet a {
+      color: var(--text-dim);
+      text-decoration: underline;
+    }
+
+    /* Candidates (Optional collapsed section) */
+    .candidates-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 8px; 
+    }
+    .candidate-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .candidate-row:last-child {
+      border-bottom: none;
+    }
+    .cand-name { flex: 1; }
+    .cand-score { font-family: var(--mono); }
 
     /* Disclaimer */
     .disclaimer {
-      margin-top: 24px;
-      padding: 16px 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
       font-size: 12px;
       color: var(--text-faint);
-      line-height: 1.6;
+      margin-top: 40px;
     }
-    .disclaimer strong { color: var(--text-dim); }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 40px 0 20px;
-      font-size: 12px;
-      color: var(--text-faint);
-    }
-    footer a { color: var(--text-dim); text-decoration: none; }
 
     /* ── Animations ─────────────────────────────────────────────── */
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: .4; transform: scale(.75); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
 
     /* ── Mobile ─────────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      header { padding: 32px 0 24px; }
-      .logo-name { font-size: 22px; }
-      .query-card, .rec-hero, .section-card { padding: 18px; }
-      .rec-fund-name { font-size: 18px; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .page { padding: 40px 20px 60px; }
+      .metrics-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -610,97 +378,80 @@
 
   <!-- ── Header ─────────────────────────────────────────────────── -->
   <header>
-    <div class="logo">
-      <div class="logo-icon">📊</div>
-      <span class="logo-name">FUNDIT</span>
-    </div>
-    <p class="tagline">
-      Evidence-driven mutual fund decision support.<br/>
-      Deterministic ranking · Hybrid RAG · Grounded AI explanation.
-    </p>
-    <div class="badge-row">
-      <span class="badge">39 Funds · 128K NAV Points</span>
-      <span class="badge">Hybrid Retrieval + BM25</span>
-      <span class="badge">Cross-Encoder Reranking</span>
-      <span class="badge">Gemini Explanations</span>
-      <span class="badge">Confidence-Gated</span>
-    </div>
+    <div class="logo-name">FUNDIT</div>
+    <div class="tagline">Evidence-based mutual fund decision support.</div>
   </header>
 
-  <!-- ── Query Card ──────────────────────────────────────────────── -->
-  <div class="query-card">
-    <div class="query-label">Investment Question</div>
+  <!-- ── Query Section ──────────────────────────────────────────── -->
+  <div class="query-section">
+    <div class="query-label">What are you looking for?</div>
     <div class="query-input-wrap">
       <textarea
         id="query-input"
-        placeholder="e.g. Which large cap fund is best for a 5-year horizon with moderate risk?"
+        placeholder="Tell us what you want to invest in..."
         maxlength="600"
-        rows="3"
       ></textarea>
     </div>
     <div class="query-footer">
       <span class="char-count" id="char-count">0 / 600</span>
       <button id="submit-btn" type="button" onclick="submitQuery()">
         <div class="btn-spinner"></div>
-        <span class="btn-text">Analyse &amp; Decide →</span>
+        <span class="btn-text">Analyse</span>
       </button>
     </div>
 
-    <div class="examples-label">Try an example:</div>
+    <div class="examples-label">Examples</div>
     <div class="examples" id="examples-row"></div>
   </div>
 
-  <!-- ── Progress ────────────────────────────────────────────────── -->
+  <!-- ── Progress ───────────────────────────────────────────────── -->
   <div id="progress-panel">
-    <div class="progress-title">Processing your query</div>
     <div class="stages" id="stages-container"></div>
   </div>
 
-  <!-- ── Error ───────────────────────────────────────────────────── -->
+  <!-- ── Error ──────────────────────────────────────────────────── -->
   <div id="error-panel">
-    <div class="err-title">⚠ Unable to process request</div>
+    <div class="err-title">Unable to process request</div>
     <div class="err-body" id="error-body"></div>
   </div>
 
   <!-- ── Abstention ─────────────────────────────────────────────── -->
   <div id="abstention-panel">
-    <div class="abstention-icon">🤔</div>
-    <div class="abstention-title">Unable to Make a Reliable Recommendation</div>
-    <div class="abstention-reason" id="abstention-reason"></div>
+    <div class="abstention-title">Unable to make a reliable recommendation.</div>
+    <div class="abstention-reason">
+      Reason:<br/>
+      <span id="abstention-reason-text"></span>
+    </div>
   </div>
 
   <!-- ── Result ─────────────────────────────────────────────────── -->
   <div id="result-panel"></div>
 
   <!-- ── Footer ─────────────────────────────────────────────────── -->
-  <footer>
-    FUNDIT — Decision Support Only · Not Financial Advice ·
-    <a href="/docs" target="_blank" rel="noopener">API Docs</a>
-  </footer>
+  <div class="disclaimer" style="text-align: center;">
+    <a href="/docs" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">API Docs</a>
+  </div>
 
 </div>
 
 <script>
 /* ── Config ─────────────────────────────────────────────────────── */
-const API_BASE = '';   // same-origin; '' means relative paths
+const API_BASE = ''; 
 const MAX_QUERY = 600;
 
+// Show at most TWO examples
 const EXAMPLES = [
-  'Which large cap fund is good for a 5-year horizon with moderate risk?',
-  'I want a low-risk fund for parking emergency cash — 6 to 12 months.',
-  'Suggest an index fund with expense ratio below 0.3% and SIP of Rs 500.',
-  'Compare HDFC Flexi Cap Fund and Mirae Asset Large Cap for a 7-year goal.',
-  'Best ELSS fund for tax saving with a 3-year lock-in period.',
+  'Best large cap fund for a 5-year horizon',
+  'Low-risk fund for emergency savings'
 ];
 
 const STAGES = [
-  { id: 'parse',     icon: '🧠', label: 'Understanding your requirements' },
-  { id: 'filter',    icon: '🗄️',  label: 'Filtering candidate funds from database' },
-  { id: 'retrieve',  icon: '🔍', label: 'Retrieving and ranking evidence' },
-  { id: 'rerank',    icon: '⚙️',  label: 'Cross-encoder reranking' },
-  { id: 'verify',    icon: '✅', label: 'Verifying evidence quality' },
-  { id: 'decide',    icon: '⚖️',  label: 'Computing deterministic decision' },
-  { id: 'explain',   icon: '💬', label: 'Generating grounded explanation' },
+  { id: 'parse',     label: 'Understanding requirements' },
+  { id: 'filter',    label: 'Filtering candidates' },
+  { id: 'retrieve',  label: 'Retrieving evidence' },
+  { id: 'rerank',    label: 'Reranking evidence' },
+  { id: 'decide',    label: 'Computing decision' },
+  { id: 'explain',   label: 'Generating analysis' },
 ];
 
 /* ── State ───────────────────────────────────────────────────────── */
@@ -720,15 +471,15 @@ document.addEventListener('DOMContentLoaded', () => {
 function buildExamples() {
   const row = document.getElementById('examples-row');
   EXAMPLES.forEach(ex => {
-    const chip = document.createElement('button');
-    chip.className = 'example-chip';
-    chip.textContent = ex;
-    chip.onclick = () => {
+    const btn = document.createElement('button');
+    btn.className = 'example-link';
+    btn.textContent = ex;
+    btn.onclick = () => {
       document.getElementById('query-input').value = ex;
       updateCharCount();
       document.getElementById('query-input').focus();
     };
-    row.appendChild(chip);
+    row.appendChild(btn);
   });
 }
 
@@ -739,9 +490,8 @@ function buildStages() {
     div.className = 'stage';
     div.id = `stage-${s.id}`;
     div.innerHTML = `
-      <div class="stage-icon">${s.icon}</div>
-      <div class="stage-text">${s.label}</div>
-      <div class="stage-pulse"></div>
+      <div class="stage-indicator"></div>
+      <div>${s.label}</div>
     `;
     container.appendChild(div);
   });
@@ -752,20 +502,12 @@ function updateCharCount() {
   const cc = document.getElementById('char-count');
   const len = ta.value.length;
   cc.textContent = `${len} / ${MAX_QUERY}`;
-  cc.classList.toggle('warn', len > MAX_QUERY * 0.85);
 }
 
 /* ── Query submission ────────────────────────────────────────────── */
 async function submitQuery() {
   const query = document.getElementById('query-input').value.trim();
-  if (!query) {
-    alert('Please enter an investment question.');
-    return;
-  }
-  if (query.length < 3) {
-    alert('Query too short — please be more descriptive.');
-    return;
-  }
+  if (!query) return;
 
   setLoading(true);
   hideAll();
@@ -804,9 +546,9 @@ async function submitQuery() {
   } catch (err) {
     stopStageAnimation();
     if (err.name === 'TimeoutError' || err.name === 'AbortError') {
-      showError('Request timed out. The server may be cold-starting — please try again in a moment.', 408);
+      showError('Request timed out. Please try again in a moment.', 408);
     } else if (err.message.includes('fetch') || err.message.includes('network') || err.message.toLowerCase().includes('failed')) {
-      showError('Cannot reach the backend server. Please ensure it is running and try again.', 503);
+      showError('Cannot reach the backend server.', 503);
     } else {
       showError(err.message || 'An unexpected error occurred.', 500);
     }
@@ -839,8 +581,7 @@ function showProgress() {
 function animateStages() {
   let i = 0;
   const stages = document.querySelectorAll('.stage');
-  // Timing per stage (ms) — honest pacing, last stage held until response
-  const timings = [800, 1200, 2000, 1500, 1000, 1200, 0];
+  const timings = [800, 1200, 2000, 1500, 1200, 0];
 
   function activate(idx) {
     stages.forEach((s, j) => {
@@ -851,25 +592,12 @@ function animateStages() {
   }
 
   activate(0);
-  stageTimer = setInterval(() => {
-    i++;
-    if (i >= stages.length - 1) { // hold on last stage
-      activate(stages.length - 1);
-      clearInterval(stageTimer);
-      return;
-    }
-    activate(i);
-  }, timings.slice(0, i+1).reduce((a,b)=>a+b, 0) / (i+1) * 800 + 600);
-
-  // Simpler: just cycle through with cumulative delays
-  clearInterval(stageTimer);
   let cum = 0;
   STAGES.forEach((s, idx) => {
     if (idx === STAGES.length - 1) {
       setTimeout(() => activate(idx), cum);
     } else {
-      const delay = cum;
-      setTimeout(() => activate(idx), delay);
+      setTimeout(() => activate(idx), cum);
       cum += timings[idx] || 800;
     }
   });
@@ -877,7 +605,6 @@ function animateStages() {
 
 function stopStageAnimation() {
   clearInterval(stageTimer);
-  // Mark all done
   document.querySelectorAll('.stage').forEach(s => {
     s.classList.remove('active');
     s.classList.add('done');
@@ -887,18 +614,14 @@ function stopStageAnimation() {
 function showError(message, status) {
   const panel = document.getElementById('error-panel');
   panel.style.display = 'block';
-  let help = '';
-  if (status === 503) help = ' Make sure the backend server is running.';
-  if (status === 408) help = ' The server may be loading models — try again shortly.';
-  if (status === 422 || status === 400) help = ' Please rephrase your query.';
-  document.getElementById('error-body').textContent = message + help;
+  document.getElementById('error-body').textContent = message;
 }
 
 function showAbstention(data) {
   const panel = document.getElementById('abstention-panel');
   panel.style.display = 'block';
-  document.getElementById('abstention-reason').textContent =
-    data.abstention_reason || 'The system could not produce a confident recommendation for this query. Please try rephrasing or providing more details.';
+  document.getElementById('abstention-reason-text').textContent =
+    data.abstention_reason || 'The available evidence does not satisfy the requested constraints.';
 }
 
 /* ── Result rendering ────────────────────────────────────────────── */
@@ -906,13 +629,6 @@ function showResult(data) {
   const panel = document.getElementById('result-panel');
   panel.style.display = 'block';
   panel.innerHTML = buildResultHTML(data);
-  // Animate score bar after paint
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const fill = document.getElementById('score-bar-fill');
-      if (fill) fill.style.width = fill.dataset.target;
-    });
-  });
 }
 
 function buildResultHTML(data) {
@@ -920,165 +636,121 @@ function buildResultHTML(data) {
   const conf = data.confidence || {};
   const confLevel = conf.level || 'MEDIUM';
   const score = w ? (w.composite_score || 0) : 0;
-
+  
   let html = '';
 
-  // ── Recommendation hero ──
-  html += `<div class="rec-hero">`;
-  html += `<div class="rec-header">
-    <div>
-      <div class="rec-label">Recommendation</div>
-      <div class="rec-fund-name">${esc(w?.fund_name || '—')}</div>
-    </div>
-    <div class="confidence-pill conf-${confLevel}">
-      <div class="conf-dot"></div>
-      ${confLevel} confidence
-    </div>
-  </div>`;
-
-  if (data.summary) {
-    html += `<div class="rec-summary">${esc(data.summary)}</div>`;
-  }
-
-  // Score bar
-  const pct = Math.round(score * 100);
-  html += `<div class="score-row">
-    <span class="score-label">Composite Score</span>
-    <div class="score-bar-bg">
-      <div class="score-bar-fill" id="score-bar-fill" style="width:0%" data-target="${pct}%"></div>
-    </div>
-    <span class="score-value">${pct}</span>
-  </div>`;
-
-  // Confidence details
+  // ── Header ──
+  html += `<div class="rec-label">Recommendation</div>`;
+  html += `<div class="rec-fund-name">${esc(w?.fund_name || '—')}</div>`;
+  
+  // Minimal confidence display
+  let marginText = '';
   if (conf.score_margin !== undefined) {
-    const margin = (conf.score_margin * 100).toFixed(1);
-    html += `<div style="font-size:12px;color:var(--text-faint);margin-top:4px;">
-      Score margin vs. runner-up: ${margin} pts · ${conf.evidence_count ?? '?'} evidence chunks verified
-    </div>`;
+    marginText = ` · ${(conf.score_margin * 100).toFixed(1)} pt margin`;
   }
-  html += `</div>`; // end rec-hero
+  html += `<div class="rec-confidence">${confLevel} confidence${marginText}</div>`;
+  html += `<div class="section-divider"></div>`;
 
-  // ── Key metrics ──
-  if (w) {
-    const sf = w.structured_facts || {};
-    const metrics = buildMetrics(sf, w);
-    if (metrics.length) {
-      html += `<div class="section-card">
-        <div class="section-title">Key Metrics</div>
-        <div class="metrics-grid">`;
+  // ── Explanation ──
+  if (data.recommendation_text) {
+    html += `<div class="section-title">Why this was selected</div>`;
+    html += `<div class="prose">${esc(data.recommendation_text)}</div>`;
+  }
+
+  // ── Key Factors (Metrics + Reasons) ──
+  const sf = w?.structured_facts || {};
+  const metrics = buildMetrics(sf);
+  
+  if (metrics.length > 0 || (data.reasons && data.reasons.length)) {
+    html += `<div class="section-title">Key factors</div>`;
+    
+    if (metrics.length > 0) {
+      html += `<div class="metrics-grid">`;
       metrics.forEach(m => {
-        html += `<div class="metric-chip">
-          <div class="metric-chip-label">${esc(m.label)}</div>
-          <div class="metric-chip-value ${m.cls || ''}">${esc(m.value)}</div>
+        html += `<div class="metric-item">
+          <span class="metric-label">${esc(m.label)}</span>
+          <span class="metric-value">${esc(m.value)}</span>
         </div>`;
       });
-      html += `</div></div>`;
+      html += `</div>`;
     }
-  }
-
-  // ── Reasons ──
-  if (data.reasons && data.reasons.length) {
-    html += `<div class="section-card">
-      <div class="section-title">Why This Fund</div>
-      <ul class="reason-list">`;
-    data.reasons.forEach(r => {
-      html += `<li>${esc(r)}</li>`;
-    });
-    html += `</ul></div>`;
-  }
-
-  // ── Full explanation ──
-  if (data.recommendation_text) {
-    html += `<div class="section-card">
-      <div class="section-title">Analysis</div>
-      <div class="prose">${esc(data.recommendation_text)}</div>
-    </div>`;
+    
+    if (data.reasons && data.reasons.length) {
+      html += `<ul class="text-list">`;
+      data.reasons.forEach(r => {
+        html += `<li>${esc(r)}</li>`;
+      });
+      html += `</ul>`;
+    }
+    
+    html += `<div class="section-divider"></div>`;
   }
 
   // ── Tradeoffs ──
   const tradeoffs = gatherTradeoffs(data);
   if (tradeoffs.length) {
-    html += `<div class="section-card">
-      <div class="section-title">Trade-offs</div>
-      <div class="tradeoff-list">`;
+    html += `<div class="section-title">Trade-offs</div>`;
+    html += `<ul class="text-list">`;
     tradeoffs.forEach(t => {
-      html += `<div class="tradeoff-item">${esc(t)}</div>`;
+      html += `<li>${esc(t)}</li>`;
     });
-    html += `</div></div>`;
-  }
-
-  // ── Candidates ──
-  if (data.top_candidates && data.top_candidates.length > 1) {
-    html += `<div class="section-card">
-      <div class="section-title">Ranked Candidates</div>
-      <div class="candidates-list">`;
-    data.top_candidates.slice(0, 7).forEach((c, i) => {
-      const isWinner = c.fund_id === w?.fund_id;
-      html += `<div class="candidate-row ${isWinner ? 'is-winner' : ''}">
-        <div class="cand-rank ${isWinner ? 'winner' : ''}">#${i+1}</div>
-        <div class="cand-name">${esc(c.fund_name)}</div>
-        <div class="cand-score">${((c.composite_score||0)*100).toFixed(0)}</div>
-      </div>`;
-    });
-    if (data.excluded_candidates && data.excluded_candidates.length) {
-      html += `<div style="font-size:12px;color:var(--text-faint);padding:6px 4px;">
-        ${data.excluded_candidates.length} fund(s) excluded by hard constraints
-      </div>`;
-    }
-    html += `</div></div>`;
+    html += `</ul>`;
+    html += `<div class="section-divider"></div>`;
   }
 
   // ── Citations ──
   if (data.citations && data.citations.length) {
-    html += `<div class="section-card">
-      <div class="section-title">Evidence &amp; Citations</div>
-      <div class="citations-list">`;
+    html += `<div class="section-title">Evidence</div>`;
+    html += `<div class="citations-list">`;
     data.citations.forEach(c => {
       const url = c.source_url;
       html += `<div class="citation-item">
-        <div class="citation-header">
-          <span class="citation-id">${esc(c.citation_id)}</span>
-          <span class="citation-title">${esc(c.title)}</span>
-        </div>
         <div class="citation-meta">
-          ${esc(c.source)} · ${esc(c.document_type)}${c.publication_date ? ' · ' + esc(c.publication_date) : ''}
-          ${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--accent);font-size:11px;">source ↗</a>` : ''}
+          <span class="citation-id">${esc(c.citation_id)}</span> 
+          ${esc(c.title)}
         </div>
-        <div class="citation-snippet">${esc(c.snippet)}</div>
+        <div class="citation-snippet">
+          "${esc(c.snippet)}" 
+          ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">source</a>` : ''}
+        </div>
       </div>`;
     });
-    html += `</div></div>`;
+    html += `</div>`;
+    html += `<div class="section-divider"></div>`;
+  }
+  
+  // ── Decision Trace (Candidates) ──
+  if (data.top_candidates && data.top_candidates.length > 1) {
+    html += `<div class="section-title">Decision trace</div>`;
+    html += `<div class="candidates-list">`;
+    data.top_candidates.slice(0, 5).forEach((c, i) => {
+      html += `<div class="candidate-row">
+        <div class="cand-name">${esc(c.fund_name)}</div>
+        <div class="cand-score">${((c.composite_score||0)*100).toFixed(0)}</div>
+      </div>`;
+    });
+    html += `</div>`;
   }
 
   // ── Disclaimer ──
   html += `<div class="disclaimer">
-    <strong>Disclaimer:</strong> ${esc(data.disclaimer || 'This analysis is for educational and decision-support purposes only. Not financial advice. Mutual fund investments are subject to market risks. Verify all information independently before investing.')}
+    Disclaimer: ${esc(data.disclaimer || 'Not financial advice. Mutual fund investments are subject to market risks.')}
   </div>`;
 
   return html;
 }
 
-function buildMetrics(sf, w) {
+function buildMetrics(sf) {
   const metrics = [];
   const fmt = (v, d=1) => v !== null && v !== undefined ? Number(v).toFixed(d) : null;
 
-  if (sf.cagr_3y !== null && sf.cagr_3y !== undefined)
-    metrics.push({ label: '3Y CAGR', value: fmt(sf.cagr_3y) + '%', cls: sf.cagr_3y > 12 ? 'good' : sf.cagr_3y < 6 ? 'bad' : '' });
-  if (sf.cagr_5y !== null && sf.cagr_5y !== undefined)
-    metrics.push({ label: '5Y CAGR', value: fmt(sf.cagr_5y) + '%', cls: sf.cagr_5y > 12 ? 'good' : sf.cagr_5y < 8 ? 'bad' : '' });
+  if (sf.risk_level) metrics.push({ label: 'Risk', value: sf.risk_level });
   if (sf.expense_ratio !== null && sf.expense_ratio !== undefined)
-    metrics.push({ label: 'Expense Ratio', value: fmt(sf.expense_ratio, 2) + '%', cls: sf.expense_ratio < 0.5 ? 'good' : sf.expense_ratio > 1.5 ? 'warn' : '' });
+    metrics.push({ label: 'Expense', value: fmt(sf.expense_ratio, 2) + '%' });
+  if (sf.cagr_3y !== null && sf.cagr_3y !== undefined)
+    metrics.push({ label: '3Y CAGR', value: fmt(sf.cagr_3y) + '%' });
   if (sf.sharpe_ratio_3y !== null && sf.sharpe_ratio_3y !== undefined)
-    metrics.push({ label: 'Sharpe (3Y)', value: fmt(sf.sharpe_ratio_3y, 2), cls: sf.sharpe_ratio_3y > 0.8 ? 'good' : sf.sharpe_ratio_3y < 0 ? 'bad' : '' });
-  if (sf.max_drawdown !== null && sf.max_drawdown !== undefined)
-    metrics.push({ label: 'Max Drawdown', value: fmt(sf.max_drawdown) + '%', cls: Math.abs(sf.max_drawdown) < 10 ? 'good' : Math.abs(sf.max_drawdown) > 25 ? 'bad' : '' });
-  if (sf.aum_cr !== null && sf.aum_cr !== undefined)
-    metrics.push({ label: 'AUM (Cr)', value: '₹' + fmt(sf.aum_cr, 0) });
-  if (sf.risk_level)
-    metrics.push({ label: 'Risk Level', value: sf.risk_level });
-  if (sf.investment_objective)
-    metrics.push({ label: 'Objective', value: sf.investment_objective });
+    metrics.push({ label: 'Sharpe (3Y)', value: fmt(sf.sharpe_ratio_3y, 2) });
 
   return metrics;
 }
@@ -1092,7 +764,6 @@ function gatherTradeoffs(data) {
       else if (t.description) notes.push(t.description);
     });
   }
-  // Fallback: use LLM tradeoff_notes if available
   return notes;
 }
 
