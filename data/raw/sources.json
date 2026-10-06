@@ -1,0 +1,24 @@
+{
+  "collected_at": "2026-10-06",
+  "funds_in_universe": 39,
+  "nav_points": 128170,
+  "attribute_records": 37,
+  "sources": [
+    {
+      "source_id": "amfi_mfapi",
+      "name": "AMFI India daily NAV history (via api.mfapi.in mirror)",
+      "url": "https://api.mfapi.in",
+      "collected_at": "2026-10-06",
+      "description": "Daily NAV series per scheme as published by the Association of Mutual Funds in India (AMFI). Used to compute returns, volatility, drawdown and Sharpe ratio.",
+      "license_notes": "AMFI NAV data is public information. api.mfapi.in is a free, unofficial JSON mirror; values should be cross-checked against amfiindia.com for production use."
+    },
+    {
+      "source_id": "kuvera_scheme_api",
+      "name": "Kuvera public scheme attribute API",
+      "url": "https://api.kuvera.in/mf/api/v5/fund_schemes/",
+      "collected_at": "2026-10-06",
+      "description": "Scheme-level attributes aggregated from AMC disclosures: total expense ratio (with date), AUM, SEBI riskometer label, investment objective, minimum SIP/lump sum, lock-in, fund manager.",
+      "license_notes": "Unofficial public endpoint of a SEBI-registered platform; no API key required. Attributes originate from AMC factsheets/SIDs and should be verified against the AMC document page recorded in each fund's source_url before any real investment decision."
+    }
+  ]
+}

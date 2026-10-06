@@ -1,0 +1,279 @@
+{
+  "description": "Curated universe of Indian mutual fund schemes (Direct Plan, Growth option) used by the AI Decision Engine. Scheme codes are AMFI codes; kuvera_code identifies the same scheme (verified by ISIN match) in the Kuvera public scheme API. A null kuvera_code means scheme attributes (expense ratio, AUM, riskometer, objective) are unavailable and will be stored as NULL / treated as UNKNOWN.",
+  "selection_note": "Selected to span SEBI categories (large/mid/small/flexi cap, ELSS, index, hybrid, debt, sectoral, contra) with well-known AMCs; this is a demo universe, not a recommendation list.",
+  "funds": [
+    {
+      "fund_id": "MF-118825",
+      "amfi_scheme_code": 118825,
+      "scheme_name": "Mirae Asset Large Cap Fund - Direct Plan - Growth",
+      "isin": "INF769K01AX2",
+      "kuvera_code": "MAFIOD1-GR"
+    },
+    {
+      "fund_id": "MF-120586",
+      "amfi_scheme_code": 120586,
+      "scheme_name": "ICICI Prudential Large Cap Fund (erstwhile Bluechip Fund) - Direct Plan - Growth",
+      "isin": "INF109K016L0",
+      "kuvera_code": "8042-GR"
+    },
+    {
+      "fund_id": "MF-118269",
+      "amfi_scheme_code": 118269,
+      "scheme_name": "Canara Robeco Large Cap Fund - Direct Plan - GROWTH OPTION",
+      "isin": "INF760K01FR2",
+      "kuvera_code": "CALCDG-GR"
+    },
+    {
+      "fund_id": "MF-118632",
+      "amfi_scheme_code": 118632,
+      "scheme_name": "Nippon India Large Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF204K01XI3",
+      "kuvera_code": "EAAG-GR"
+    },
+    {
+      "fund_id": "MF-119598",
+      "amfi_scheme_code": 119598,
+      "scheme_name": "SBI Large Cap Fund - Direct Plan - Growth",
+      "isin": "INF200K01QX4",
+      "kuvera_code": "SBD103G-GR"
+    },
+    {
+      "fund_id": "MF-122639",
+      "amfi_scheme_code": 122639,
+      "scheme_name": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+      "isin": "INF879O01027",
+      "kuvera_code": "PP001ZG-GR"
+    },
+    {
+      "fund_id": "MF-118955",
+      "amfi_scheme_code": 118955,
+      "scheme_name": "HDFC Flexi Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF179K01UT0",
+      "kuvera_code": "02T-GR"
+    },
+    {
+      "fund_id": "MF-118535",
+      "amfi_scheme_code": 118535,
+      "scheme_name": "Franklin India Flexi Cap Fund - Direct Plan - Growth",
+      "isin": "INF090I01FK3",
+      "kuvera_code": "418-GR"
+    },
+    {
+      "fund_id": "MF-120166",
+      "amfi_scheme_code": 120166,
+      "scheme_name": "Kotak Flexi Cap Fund - Direct Plan - Growth",
+      "isin": "INF174K01LS2",
+      "kuvera_code": "KO168D-GR"
+    },
+    {
+      "fund_id": "MF-120843",
+      "amfi_scheme_code": 120843,
+      "scheme_name": "Quant Flexi Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF966L01911",
+      "kuvera_code": "QUPEDG-GR"
+    },
+    {
+      "fund_id": "MF-118989",
+      "amfi_scheme_code": 118989,
+      "scheme_name": "HDFC Mid Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF179K01XQ0",
+      "kuvera_code": "MCOGT-GR"
+    },
+    {
+      "fund_id": "MF-120505",
+      "amfi_scheme_code": 120505,
+      "scheme_name": "Axis Midcap Fund - Direct Plan - Growth Option",
+      "isin": "INF846K01EH3",
+      "kuvera_code": null
+    },
+    {
+      "fund_id": "MF-118668",
+      "amfi_scheme_code": 118668,
+      "scheme_name": "Nippon India Growth Mid Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF204K01E54",
+      "kuvera_code": "GFAG-GR"
+    },
+    {
+      "fund_id": "MF-147445",
+      "amfi_scheme_code": 147445,
+      "scheme_name": "Mirae Asset Midcap Fund - Direct Plan - Growth",
+      "isin": "INF769K01FA9",
+      "kuvera_code": "MAMCD1-GR"
+    },
+    {
+      "fund_id": "MF-125497",
+      "amfi_scheme_code": 125497,
+      "scheme_name": "SBI SMALL CAP FUND - Direct Plan - Growth",
+      "isin": "INF200K01T51",
+      "kuvera_code": "SBD346G-GR"
+    },
+    {
+      "fund_id": "MF-118778",
+      "amfi_scheme_code": 118778,
+      "scheme_name": "Nippon India Small Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF204K01K15",
+      "kuvera_code": "SCAG-GR"
+    },
+    {
+      "fund_id": "MF-120828",
+      "amfi_scheme_code": 120828,
+      "scheme_name": "Quant Small Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF966L01689",
+      "kuvera_code": "QUIBDG-GR"
+    },
+    {
+      "fund_id": "MF-125354",
+      "amfi_scheme_code": 125354,
+      "scheme_name": "Axis Small Cap Fund - Direct Plan - Growth Option",
+      "isin": "INF846K01K35",
+      "kuvera_code": "AXSCDG-GR"
+    },
+    {
+      "fund_id": "MF-119212",
+      "amfi_scheme_code": 119212,
+      "scheme_name": "DSP Small Cap Fund - Direct Plan - Growth",
+      "isin": "INF740K01QD1",
+      "kuvera_code": "DS788-GR"
+    },
+    {
+      "fund_id": "MF-135781",
+      "amfi_scheme_code": 135781,
+      "scheme_name": "Mirae Asset ELSS Tax Saver Fund - Direct Plan - Growth",
+      "isin": "INF769K01DM9",
+      "kuvera_code": "MATSD1-GR"
+    },
+    {
+      "fund_id": "MF-120503",
+      "amfi_scheme_code": 120503,
+      "scheme_name": "Axis ELSS- Tax Saver Fund - Direct Plan - Growth Option",
+      "isin": "INF846K01EW2",
+      "kuvera_code": "TSDG-GR"
+    },
+    {
+      "fund_id": "MF-120716",
+      "amfi_scheme_code": 120716,
+      "scheme_name": "UTI Nifty 50 Index Fund - Direct Plan - Growth",
+      "isin": "INF789F01XA0",
+      "kuvera_code": "UTNID2-GR"
+    },
+    {
+      "fund_id": "MF-119827",
+      "amfi_scheme_code": 119827,
+      "scheme_name": "SBI NIFTY INDEX FUND - Direct Plan - Growth",
+      "isin": "INF200K01TE8",
+      "kuvera_code": null
+    },
+    {
+      "fund_id": "MF-120684",
+      "amfi_scheme_code": 120684,
+      "scheme_name": "ICICI Prudential Nifty Next 50 Index Fund - Direct Plan - Growth",
+      "isin": "INF109K01Y80",
+      "kuvera_code": "8107-GR"
+    },
+    {
+      "fund_id": "MF-147625",
+      "amfi_scheme_code": 147625,
+      "scheme_name": "Motilal Oswal Nifty 500 Index Fund - Direct Plan - Growth",
+      "isin": "INF247L01957",
+      "kuvera_code": "MONTGD-GR"
+    },
+    {
+      "fund_id": "MF-118968",
+      "amfi_scheme_code": 118968,
+      "scheme_name": "HDFC Balanced Advantage Fund - Direct Plan - Growth Option",
+      "isin": "INF179K01WA6",
+      "kuvera_code": "GFGT-GR"
+    },
+    {
+      "fund_id": "MF-120377",
+      "amfi_scheme_code": 120377,
+      "scheme_name": "ICICI Prudential Balanced Advantage Fund - Direct Plan - Growth",
+      "isin": "INF109K012B0",
+      "kuvera_code": "8180-GR"
+    },
+    {
+      "fund_id": "MF-118615",
+      "amfi_scheme_code": 118615,
+      "scheme_name": "Edelweiss Balanced Advantage Fund - Direct Plan - Growth",
+      "isin": "INF754K01BS2",
+      "kuvera_code": "ARDG-GR"
+    },
+    {
+      "fund_id": "MF-119839",
+      "amfi_scheme_code": 119839,
+      "scheme_name": "SBI CONSERVATIVE HYBRID FUND - Direct Plan - Growth",
+      "isin": "INF200K01TS8",
+      "kuvera_code": "SBD44-GR"
+    },
+    {
+      "fund_id": "MF-120692",
+      "amfi_scheme_code": 120692,
+      "scheme_name": "ICICI Prudential Corporate Bond Fund - Direct Plan - Growth",
+      "isin": "INF109K016B1",
+      "kuvera_code": "8078-GR"
+    },
+    {
+      "fund_id": "MF-118987",
+      "amfi_scheme_code": 118987,
+      "scheme_name": "HDFC Corporate Bond Fund - Direct Plan - Growth Option",
+      "isin": "INF179K01XD8",
+      "kuvera_code": "MTOGT-GR"
+    },
+    {
+      "fund_id": "MF-119016",
+      "amfi_scheme_code": 119016,
+      "scheme_name": "HDFC Short Term Fund - Direct Plan - Growth Option",
+      "isin": "INF179K01YM7",
+      "kuvera_code": "STOGT-GR"
+    },
+    {
+      "fund_id": "MF-120447",
+      "amfi_scheme_code": 120447,
+      "scheme_name": "Axis Gilt Fund - Direct Plan - Growth Option",
+      "isin": "INF846K01DD4",
+      "kuvera_code": "CMDG-GR"
+    },
+    {
+      "fund_id": "MF-119766",
+      "amfi_scheme_code": 119766,
+      "scheme_name": "Kotak Liquid Fund - Direct Plan - Growth",
+      "isin": "INF174K01NE8",
+      "kuvera_code": "KO462D-GR"
+    },
+    {
+      "fund_id": "MF-119091",
+      "amfi_scheme_code": 119091,
+      "scheme_name": "HDFC Liquid Fund - Direct Plan - Growth Option",
+      "isin": "INF179KB1HP9",
+      "kuvera_code": "HDLFGTN-GR"
+    },
+    {
+      "fund_id": "MF-120594",
+      "amfi_scheme_code": 120594,
+      "scheme_name": "ICICI Prudential Technology Fund - Direct Plan - Growth",
+      "isin": "INF109K01Z48",
+      "kuvera_code": "8019-GR"
+    },
+    {
+      "fund_id": "MF-135800",
+      "amfi_scheme_code": 135800,
+      "scheme_name": "Tata Digital India Fund - Direct Plan - Growth Option",
+      "isin": "INF277K01Z77",
+      "kuvera_code": "TADIFGZ-GR"
+    },
+    {
+      "fund_id": "MF-120348",
+      "amfi_scheme_code": 120348,
+      "scheme_name": "Invesco India Contra Fund - Direct Plan - Growth",
+      "isin": "INF205K01LE4",
+      "kuvera_code": "RGCFD1-GR"
+    },
+    {
+      "fund_id": "MF-119835",
+      "amfi_scheme_code": 119835,
+      "scheme_name": "SBI CONTRA FUND - Direct Plan - Growth",
+      "isin": "INF200K01RA0",
+      "kuvera_code": "SBD036G-GR"
+    }
+  ]
+}

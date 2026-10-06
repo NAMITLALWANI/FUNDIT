@@ -1,0 +1,86 @@
+[
+  {
+    "query_id": "eval-q01-liquid-low-risk",
+    "query": "I am looking for a very low risk liquid fund for parking emergency cash.",
+    "expected_intent": "recommendation",
+    "expected_constraints": {
+      "sub_categories": ["Liquid Fund"],
+      "max_risk_level": "Low to Moderate"
+    },
+    "expected_fund_ids": [
+      "MF-119091"
+    ],
+    "description": "Tests low-risk mapping and liquid fund sub-category. HDFC Liquid (MF-119091) is 'Low to Moderate', while Kotak is 'Moderate' (Moderately High ceiling)."
+  },
+  {
+    "query_id": "eval-q02-small-cap-growth",
+    "query": "Best performing small cap fund for long term capital appreciation with low expense ratio.",
+    "expected_intent": "recommendation",
+    "expected_constraints": {
+      "sub_categories": ["Small Cap Fund"]
+    },
+    "expected_fund_ids": [
+      "MF-118778",
+      "MF-120828",
+      "MF-119212",
+      "MF-125354",
+      "MF-125497"
+    ],
+    "description": "Tests capital appreciation objective mapping and low-cost preference on Small Cap funds. Nippon (MF-118778) has lowest ER, Quant (MF-120828) has highest return."
+  },
+  {
+    "query_id": "eval-q03-flexi-cap-sip",
+    "query": "I want to invest in a flexi cap fund with a SIP of ₹200. It must have a proven track record.",
+    "expected_intent": "recommendation",
+    "expected_constraints": {
+      "sip_amount": 200.0,
+      "sub_categories": ["Flexi Cap Fund"]
+    },
+    "expected_fund_ids": [
+      "MF-118955",
+      "MF-120166"
+    ],
+    "description": "Tests SIP amount hard constraint (filtering out PPFAS and Franklin) and consistency preference."
+  },
+  {
+    "query_id": "eval-q04-baf-capital-protection",
+    "query": "Looking for a stable balanced advantage fund for capital preservation.",
+    "expected_intent": "recommendation",
+    "expected_constraints": {
+      "sub_categories": ["Dynamic Asset Allocation or Balanced Advantage"]
+    },
+    "expected_fund_ids": [
+      "MF-118968",
+      "MF-120377",
+      "MF-118615"
+    ],
+    "description": "Tests capital preservation objective on BAF category, which should boost low volatility candidates."
+  },
+  {
+    "query_id": "eval-q05-impossible-sip",
+    "query": "Find an equity fund with a minimum SIP of ₹10.",
+    "expected_intent": "recommendation",
+    "expected_constraints": {
+      "sip_amount": 10.0,
+      "categories": ["Equity"]
+    },
+    "expected_fund_ids": [],
+    "description": "Impossible constraint: No equity funds have a SIP amount as low as 10. System should abstain."
+  },
+  {
+    "query_id": "eval-q06-large-cap-horizon",
+    "query": "Which large cap fund is good for 5 years horizon?",
+    "expected_intent": "recommendation",
+    "expected_constraints": {
+      "sub_categories": ["Large Cap Fund"]
+    },
+    "expected_fund_ids": [
+      "MF-120586",
+      "MF-118632",
+      "MF-118269",
+      "MF-118825",
+      "MF-119598"
+    ],
+    "description": "Standard large cap recommendation test with a horizon constraint."
+  }
+]
