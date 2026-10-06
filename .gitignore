@@ -53,3 +53,6 @@ data/processed/*.json
 !data/processed/.gitkeep
 *.db
 *.npz
+
+# AI/Agent plans
+.junie/
