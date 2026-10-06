@@ -14,7 +14,7 @@ router = APIRouter(tags=["Health & Monitoring"])
 @router.get("/health", response_model=HealthResponse, summary="Liveness Probe")
 def health_check() -> HealthResponse:
     """Returns basic liveness status."""
-    return HealthResponse(status="ok", version="0.1.0", app_name="AI-Decision-Engine-V2")
+    return HealthResponse(status="ok", version="2.0.0", app_name="FUNDIT")
 
 
 @router.get("/ready", response_model=ReadyResponse, summary="Readiness Probe")

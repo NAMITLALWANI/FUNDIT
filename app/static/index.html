@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FUNDIT — AI Mutual Fund Decision Engine</title>
+  <meta name="description" content="Evidence-driven AI mutual fund decision support. Natural-language queries. Deterministic ranking. Grounded Gemini explanations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg:          #0d0f14;
+      --surface:     #151821;
+      --surface2:    #1c1f2b;
+      --border:      #252836;
+      --border-hi:   #353a4f;
+      --accent:      #6c63ff;
+      --accent-dim:  #3d396b;
+      --accent-glow: rgba(108,99,255,.18);
+      --green:       #34d399;
+      --amber:       #fbbf24;
+      --red:         #f87171;
+      --blue:        #60a5fa;
+      --muted:       #6b7280;
+      --text:        #e2e8f0;
+      --text-dim:    #94a3b8;
+      --text-faint:  #475569;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --shadow:      0 4px 32px rgba(0,0,0,.45);
+      --font:        'Inter', system-ui, sans-serif;
+      --mono:        'JetBrains Mono', monospace;
+    }
+
+    /* ── Reset ────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .page { max-width: 820px; margin: 0 auto; padding: 0 20px 80px; }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    header {
+      padding: 52px 0 36px;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), #8b83ff);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .logo-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tagline {
+      font-size: 15px;
+      color: var(--text-dim);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border-hi);
+      color: var(--text-dim);
+      background: var(--surface);
+    }
+
+    /* ── Query card ───────────────────────────────────────────────── */
+    .query-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 32px;
+      box-shadow: var(--shadow);
+    }
+    .query-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 12px;
+    }
+    .query-input-wrap {
+      position: relative;
+    }
+    textarea#query-input {
+      width: 100%;
+      min-height: 90px;
+      background: var(--surface2);
+      border: 1px solid var(--border-hi);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      padding: 14px 16px;
+      resize: vertical;
+      outline: none;
+      transition: border-color .2s;
+      line-height: 1.5;
+    }
+    textarea#query-input::placeholder { color: var(--text-faint); }
+    textarea#query-input:focus { border-color: var(--accent); }
+
+    .query-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .char-count {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+    .char-count.warn { color: var(--amber); }
+
+    #submit-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: background .15s, transform .1s, box-shadow .15s;
+      box-shadow: 0 0 0 0 var(--accent-glow);
+    }
+    #submit-btn:hover:not(:disabled) {
+      background: #7c74ff;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    #submit-btn:active:not(:disabled) { transform: scale(.97); }
+    #submit-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+    .btn-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    #submit-btn.loading .btn-spinner { display: block; }
+    #submit-btn.loading .btn-text { display: none; }
+
+    /* ── Example queries ─────────────────────────────────────────── */
+    .examples-label {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin: 16px 0 8px;
+    }
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .example-chip {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-hi);
+      color: var(--text-dim);
+      background: var(--surface2);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+      text-align: left;
+    }
+    .example-chip:hover {
+      border-color: var(--accent-dim);
+      color: var(--text);
+    }
+
+    /* ── Progress stage display ─────────────────────────────────── */
+    #progress-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 24px;
+      animation: fadeIn .3s ease;
+    }
+    .progress-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 20px;
+    }
+    .stages {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .stage {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: .35;
+      transition: opacity .3s;
+    }
+    .stage.active { opacity: 1; }
+    .stage.done   { opacity: .6; }
+    .stage-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .stage.active .stage-icon {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .stage.done .stage-icon { background: var(--accent-dim); border-color: var(--accent-dim); }
+    .stage-pulse {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.2s ease-in-out infinite;
+      display: none;
+      flex-shrink: 0;
+    }
+    .stage.active .stage-pulse { display: block; }
+    .stage-text { font-size: 14px; color: var(--text-dim); }
+    .stage.active .stage-text { color: var(--text); font-weight: 500; }
+
+    /* ── Error banner ─────────────────────────────────────────────── */
+    #error-panel {
+      display: none;
+      background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.3);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-top: 24px;
+      animation: fadeIn .3s ease;
+    }
+    #error-panel .err-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+    #error-panel .err-body { font-size: 13px; color: var(--text-dim); }
+
+    /* ── Abstention panel ─────────────────────────────────────────── */
+    #abstention-panel {
+      display: none;
+      background: rgba(251,191,36,.06);
+      border: 1px solid rgba(251,191,36,.3);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 24px;
+      animation: fadeIn .3s ease;
+    }
+    .abstention-icon { font-size: 32px; margin-bottom: 12px; }
+    .abstention-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+    .abstention-reason { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+
+    /* ── Result card ─────────────────────────────────────────────── */
+    #result-panel {
+      display: none;
+      margin-top: 24px;
+      animation: fadeIn .4s ease;
+    }
+
+    /* Confidence pill */
+    .confidence-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+    .conf-HIGH   { background: rgba(52,211,153,.12); color: var(--green);  border: 1px solid rgba(52,211,153,.3); }
+    .conf-MEDIUM { background: rgba(251,191,36,.10); color: var(--amber);  border: 1px solid rgba(251,191,36,.3); }
+    .conf-LOW    { background: rgba(248,113,113,.10); color: var(--red);   border: 1px solid rgba(248,113,113,.3); }
+    .conf-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* Recommendation hero */
+    .rec-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .rec-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .rec-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .rec-fund-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .rec-summary {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.65;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--accent);
+    }
+
+    /* Score bar */
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .score-label { font-size: 12px; color: var(--text-faint); white-space: nowrap; }
+    .score-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), #8b83ff);
+      transition: width .8s cubic-bezier(.4,0,.2,1);
+    }
+    .score-value {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--mono);
+      color: var(--text);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    /* Section card */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Reasons list */
+    .reason-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .reason-list li {
+      display: flex;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.55;
+    }
+    .reason-list li::before {
+      content: '→';
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Tradeoffs */
+    .tradeoff-list { display: flex; flex-direction: column; gap: 10px; }
+    .tradeoff-item {
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      line-height: 1.55;
+    }
+    .tradeoff-item::before { content: '⚖ '; color: var(--amber); }
+
+    /* Key metrics grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .metric-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+    .metric-chip-label { font-size: 11px; color: var(--text-faint); margin-bottom: 4px; }
+    .metric-chip-value { font-size: 17px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+    .metric-chip-value.good  { color: var(--green); }
+    .metric-chip-value.warn  { color: var(--amber); }
+    .metric-chip-value.bad   { color: var(--red); }
+
+    /* Candidates ranking */
+    .candidates-list { display: flex; flex-direction: column; gap: 10px; }
+    .candidate-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .candidate-row.is-winner {
+      border-color: var(--accent-dim);
+      background: rgba(108,99,255,.07);
+    }
+    .cand-rank {
+      font-size: 13px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--text-faint);
+      min-width: 22px;
+    }
+    .cand-rank.winner { color: var(--accent); }
+    .cand-name { flex: 1; font-size: 14px; font-weight: 500; }
+    .cand-score {
+      font-size: 13px;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+    .cand-excluded .cand-name { color: var(--text-faint); text-decoration: line-through; }
+
+    /* Citations */
+    .citations-list { display: flex; flex-direction: column; gap: 10px; }
+    .citation-item {
+      padding: 14px 16px;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .citation-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .citation-id {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 2px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .citation-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .citation-meta {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+    .citation-snippet {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.55;
+      font-style: italic;
+      border-left: 2px solid var(--border-hi);
+      padding-left: 12px;
+    }
+
+    /* Recommendation text prose */
+    .prose {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      margin-top: 24px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--text-faint);
+      line-height: 1.6;
+    }
+    .disclaimer strong { color: var(--text-dim); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 0 20px;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+
+    /* ── Animations ─────────────────────────────────────────────── */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.75); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Mobile ─────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      header { padding: 32px 0 24px; }
+      .logo-name { font-size: 22px; }
+      .query-card, .rec-hero, .section-card { padding: 18px; }
+      .rec-fund-name { font-size: 18px; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📊</div>
+      <span class="logo-name">FUNDIT</span>
+    </div>
+    <p class="tagline">
+      Evidence-driven mutual fund decision support.<br/>
+      Deterministic ranking · Hybrid RAG · Grounded AI explanation.
+    </p>
+    <div class="badge-row">
+      <span class="badge">39 Funds · 128K NAV Points</span>
+      <span class="badge">Hybrid Retrieval + BM25</span>
+      <span class="badge">Cross-Encoder Reranking</span>
+      <span class="badge">Gemini Explanations</span>
+      <span class="badge">Confidence-Gated</span>
+    </div>
+  </header>
+
+  <!-- ── Query Card ──────────────────────────────────────────────── -->
+  <div class="query-card">
+    <div class="query-label">Investment Question</div>
+    <div class="query-input-wrap">
+      <textarea
+        id="query-input"
+        placeholder="e.g. Which large cap fund is best for a 5-year horizon with moderate risk?"
+        maxlength="600"
+        rows="3"
+      ></textarea>
+    </div>
+    <div class="query-footer">
+      <span class="char-count" id="char-count">0 / 600</span>
+      <button id="submit-btn" type="button" onclick="submitQuery()">
+        <div class="btn-spinner"></div>
+        <span class="btn-text">Analyse &amp; Decide →</span>
+      </button>
+    </div>
+
+    <div class="examples-label">Try an example:</div>
+    <div class="examples" id="examples-row"></div>
+  </div>
+
+  <!-- ── Progress ────────────────────────────────────────────────── -->
+  <div id="progress-panel">
+    <div class="progress-title">Processing your query</div>
+    <div class="stages" id="stages-container"></div>
+  </div>
+
+  <!-- ── Error ───────────────────────────────────────────────────── -->
+  <div id="error-panel">
+    <div class="err-title">⚠ Unable to process request</div>
+    <div class="err-body" id="error-body"></div>
+  </div>
+
+  <!-- ── Abstention ─────────────────────────────────────────────── -->
+  <div id="abstention-panel">
+    <div class="abstention-icon">🤔</div>
+    <div class="abstention-title">Unable to Make a Reliable Recommendation</div>
+    <div class="abstention-reason" id="abstention-reason"></div>
+  </div>
+
+  <!-- ── Result ─────────────────────────────────────────────────── -->
+  <div id="result-panel"></div>
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <footer>
+    FUNDIT — Decision Support Only · Not Financial Advice ·
+    <a href="/docs" target="_blank" rel="noopener">API Docs</a>
+  </footer>
+
+</div>
+
+<script>
+/* ── Config ─────────────────────────────────────────────────────── */
+const API_BASE = '';   // same-origin; '' means relative paths
+const MAX_QUERY = 600;
+
+const EXAMPLES = [
+  'Which large cap fund is good for a 5-year horizon with moderate risk?',
+  'I want a low-risk fund for parking emergency cash — 6 to 12 months.',
+  'Suggest an index fund with expense ratio below 0.3% and SIP of Rs 500.',
+  'Compare HDFC Flexi Cap Fund and Mirae Asset Large Cap for a 7-year goal.',
+  'Best ELSS fund for tax saving with a 3-year lock-in period.',
+];
+
+const STAGES = [
+  { id: 'parse',     icon: '🧠', label: 'Understanding your requirements' },
+  { id: 'filter',    icon: '🗄️',  label: 'Filtering candidate funds from database' },
+  { id: 'retrieve',  icon: '🔍', label: 'Retrieving and ranking evidence' },
+  { id: 'rerank',    icon: '⚙️',  label: 'Cross-encoder reranking' },
+  { id: 'verify',    icon: '✅', label: 'Verifying evidence quality' },
+  { id: 'decide',    icon: '⚖️',  label: 'Computing deterministic decision' },
+  { id: 'explain',   icon: '💬', label: 'Generating grounded explanation' },
+];
+
+/* ── State ───────────────────────────────────────────────────────── */
+let stageTimer = null;
+
+/* ── Init ────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  buildExamples();
+  buildStages();
+  const ta = document.getElementById('query-input');
+  ta.addEventListener('input', updateCharCount);
+  ta.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitQuery();
+  });
+});
+
+function buildExamples() {
+  const row = document.getElementById('examples-row');
+  EXAMPLES.forEach(ex => {
+    const chip = document.createElement('button');
+    chip.className = 'example-chip';
+    chip.textContent = ex;
+    chip.onclick = () => {
+      document.getElementById('query-input').value = ex;
+      updateCharCount();
+      document.getElementById('query-input').focus();
+    };
+    row.appendChild(chip);
+  });
+}
+
+function buildStages() {
+  const container = document.getElementById('stages-container');
+  STAGES.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'stage';
+    div.id = `stage-${s.id}`;
+    div.innerHTML = `
+      <div class="stage-icon">${s.icon}</div>
+      <div class="stage-text">${s.label}</div>
+      <div class="stage-pulse"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function updateCharCount() {
+  const ta = document.getElementById('query-input');
+  const cc = document.getElementById('char-count');
+  const len = ta.value.length;
+  cc.textContent = `${len} / ${MAX_QUERY}`;
+  cc.classList.toggle('warn', len > MAX_QUERY * 0.85);
+}
+
+/* ── Query submission ────────────────────────────────────────────── */
+async function submitQuery() {
+  const query = document.getElementById('query-input').value.trim();
+  if (!query) {
+    alert('Please enter an investment question.');
+    return;
+  }
+  if (query.length < 3) {
+    alert('Query too short — please be more descriptive.');
+    return;
+  }
+
+  setLoading(true);
+  hideAll();
+  showProgress();
+  animateStages();
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/v1/decisions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, debug: false }),
+      signal: AbortSignal.timeout(90000),
+    });
+
+    stopStageAnimation();
+
+    if (!resp.ok) {
+      let errMsg = `HTTP ${resp.status}`;
+      try {
+        const errData = await resp.json();
+        errMsg = errData?.detail?.message || errData?.detail || errData?.error?.message || errMsg;
+      } catch {}
+      showError(errMsg, resp.status);
+      return;
+    }
+
+    const data = await resp.json();
+    hideAll();
+
+    if (data.abstained) {
+      showAbstention(data);
+    } else {
+      showResult(data);
+    }
+
+  } catch (err) {
+    stopStageAnimation();
+    if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+      showError('Request timed out. The server may be cold-starting — please try again in a moment.', 408);
+    } else if (err.message.includes('fetch') || err.message.includes('network') || err.message.toLowerCase().includes('failed')) {
+      showError('Cannot reach the backend server. Please ensure it is running and try again.', 503);
+    } else {
+      showError(err.message || 'An unexpected error occurred.', 500);
+    }
+  } finally {
+    setLoading(false);
+  }
+}
+
+/* ── UI state helpers ────────────────────────────────────────────── */
+function setLoading(on) {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = on;
+  btn.classList.toggle('loading', on);
+}
+
+function hideAll() {
+  ['progress-panel','error-panel','abstention-panel','result-panel'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  clearInterval(stageTimer);
+  document.querySelectorAll('.stage').forEach(s => {
+    s.classList.remove('active','done');
+  });
+}
+
+function showProgress() {
+  document.getElementById('progress-panel').style.display = 'block';
+}
+
+function animateStages() {
+  let i = 0;
+  const stages = document.querySelectorAll('.stage');
+  // Timing per stage (ms) — honest pacing, last stage held until response
+  const timings = [800, 1200, 2000, 1500, 1000, 1200, 0];
+
+  function activate(idx) {
+    stages.forEach((s, j) => {
+      if (j < idx) { s.classList.remove('active'); s.classList.add('done'); }
+      else if (j === idx) { s.classList.add('active'); s.classList.remove('done'); }
+      else { s.classList.remove('active','done'); }
+    });
+  }
+
+  activate(0);
+  stageTimer = setInterval(() => {
+    i++;
+    if (i >= stages.length - 1) { // hold on last stage
+      activate(stages.length - 1);
+      clearInterval(stageTimer);
+      return;
+    }
+    activate(i);
+  }, timings.slice(0, i+1).reduce((a,b)=>a+b, 0) / (i+1) * 800 + 600);
+
+  // Simpler: just cycle through with cumulative delays
+  clearInterval(stageTimer);
+  let cum = 0;
+  STAGES.forEach((s, idx) => {
+    if (idx === STAGES.length - 1) {
+      setTimeout(() => activate(idx), cum);
+    } else {
+      const delay = cum;
+      setTimeout(() => activate(idx), delay);
+      cum += timings[idx] || 800;
+    }
+  });
+}
+
+function stopStageAnimation() {
+  clearInterval(stageTimer);
+  // Mark all done
+  document.querySelectorAll('.stage').forEach(s => {
+    s.classList.remove('active');
+    s.classList.add('done');
+  });
+}
+
+function showError(message, status) {
+  const panel = document.getElementById('error-panel');
+  panel.style.display = 'block';
+  let help = '';
+  if (status === 503) help = ' Make sure the backend server is running.';
+  if (status === 408) help = ' The server may be loading models — try again shortly.';
+  if (status === 422 || status === 400) help = ' Please rephrase your query.';
+  document.getElementById('error-body').textContent = message + help;
+}
+
+function showAbstention(data) {
+  const panel = document.getElementById('abstention-panel');
+  panel.style.display = 'block';
+  document.getElementById('abstention-reason').textContent =
+    data.abstention_reason || 'The system could not produce a confident recommendation for this query. Please try rephrasing or providing more details.';
+}
+
+/* ── Result rendering ────────────────────────────────────────────── */
+function showResult(data) {
+  const panel = document.getElementById('result-panel');
+  panel.style.display = 'block';
+  panel.innerHTML = buildResultHTML(data);
+  // Animate score bar after paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const fill = document.getElementById('score-bar-fill');
+      if (fill) fill.style.width = fill.dataset.target;
+    });
+  });
+}
+
+function buildResultHTML(data) {
+  const w = data.winner;
+  const conf = data.confidence || {};
+  const confLevel = conf.level || 'MEDIUM';
+  const score = w ? (w.composite_score || 0) : 0;
+
+  let html = '';
+
+  // ── Recommendation hero ──
+  html += `<div class="rec-hero">`;
+  html += `<div class="rec-header">
+    <div>
+      <div class="rec-label">Recommendation</div>
+      <div class="rec-fund-name">${esc(w?.fund_name || '—')}</div>
+    </div>
+    <div class="confidence-pill conf-${confLevel}">
+      <div class="conf-dot"></div>
+      ${confLevel} confidence
+    </div>
+  </div>`;
+
+  if (data.summary) {
+    html += `<div class="rec-summary">${esc(data.summary)}</div>`;
+  }
+
+  // Score bar
+  const pct = Math.round(score * 100);
+  html += `<div class="score-row">
+    <span class="score-label">Composite Score</span>
+    <div class="score-bar-bg">
+      <div class="score-bar-fill" id="score-bar-fill" style="width:0%" data-target="${pct}%"></div>
+    </div>
+    <span class="score-value">${pct}</span>
+  </div>`;
+
+  // Confidence details
+  if (conf.score_margin !== undefined) {
+    const margin = (conf.score_margin * 100).toFixed(1);
+    html += `<div style="font-size:12px;color:var(--text-faint);margin-top:4px;">
+      Score margin vs. runner-up: ${margin} pts · ${conf.evidence_count ?? '?'} evidence chunks verified
+    </div>`;
+  }
+  html += `</div>`; // end rec-hero
+
+  // ── Key metrics ──
+  if (w) {
+    const sf = w.structured_facts || {};
+    const metrics = buildMetrics(sf, w);
+    if (metrics.length) {
+      html += `<div class="section-card">
+        <div class="section-title">Key Metrics</div>
+        <div class="metrics-grid">`;
+      metrics.forEach(m => {
+        html += `<div class="metric-chip">
+          <div class="metric-chip-label">${esc(m.label)}</div>
+          <div class="metric-chip-value ${m.cls || ''}">${esc(m.value)}</div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  // ── Reasons ──
+  if (data.reasons && data.reasons.length) {
+    html += `<div class="section-card">
+      <div class="section-title">Why This Fund</div>
+      <ul class="reason-list">`;
+    data.reasons.forEach(r => {
+      html += `<li>${esc(r)}</li>`;
+    });
+    html += `</ul></div>`;
+  }
+
+  // ── Full explanation ──
+  if (data.recommendation_text) {
+    html += `<div class="section-card">
+      <div class="section-title">Analysis</div>
+      <div class="prose">${esc(data.recommendation_text)}</div>
+    </div>`;
+  }
+
+  // ── Tradeoffs ──
+  const tradeoffs = gatherTradeoffs(data);
+  if (tradeoffs.length) {
+    html += `<div class="section-card">
+      <div class="section-title">Trade-offs</div>
+      <div class="tradeoff-list">`;
+    tradeoffs.forEach(t => {
+      html += `<div class="tradeoff-item">${esc(t)}</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── Candidates ──
+  if (data.top_candidates && data.top_candidates.length > 1) {
+    html += `<div class="section-card">
+      <div class="section-title">Ranked Candidates</div>
+      <div class="candidates-list">`;
+    data.top_candidates.slice(0, 7).forEach((c, i) => {
+      const isWinner = c.fund_id === w?.fund_id;
+      html += `<div class="candidate-row ${isWinner ? 'is-winner' : ''}">
+        <div class="cand-rank ${isWinner ? 'winner' : ''}">#${i+1}</div>
+        <div class="cand-name">${esc(c.fund_name)}</div>
+        <div class="cand-score">${((c.composite_score||0)*100).toFixed(0)}</div>
+      </div>`;
+    });
+    if (data.excluded_candidates && data.excluded_candidates.length) {
+      html += `<div style="font-size:12px;color:var(--text-faint);padding:6px 4px;">
+        ${data.excluded_candidates.length} fund(s) excluded by hard constraints
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // ── Citations ──
+  if (data.citations && data.citations.length) {
+    html += `<div class="section-card">
+      <div class="section-title">Evidence &amp; Citations</div>
+      <div class="citations-list">`;
+    data.citations.forEach(c => {
+      const url = c.source_url;
+      html += `<div class="citation-item">
+        <div class="citation-header">
+          <span class="citation-id">${esc(c.citation_id)}</span>
+          <span class="citation-title">${esc(c.title)}</span>
+        </div>
+        <div class="citation-meta">
+          ${esc(c.source)} · ${esc(c.document_type)}${c.publication_date ? ' · ' + esc(c.publication_date) : ''}
+          ${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener" style="color:var(--accent);font-size:11px;">source ↗</a>` : ''}
+        </div>
+        <div class="citation-snippet">${esc(c.snippet)}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // ── Disclaimer ──
+  html += `<div class="disclaimer">
+    <strong>Disclaimer:</strong> ${esc(data.disclaimer || 'This analysis is for educational and decision-support purposes only. Not financial advice. Mutual fund investments are subject to market risks. Verify all information independently before investing.')}
+  </div>`;
+
+  return html;
+}
+
+function buildMetrics(sf, w) {
+  const metrics = [];
+  const fmt = (v, d=1) => v !== null && v !== undefined ? Number(v).toFixed(d) : null;
+
+  if (sf.cagr_3y !== null && sf.cagr_3y !== undefined)
+    metrics.push({ label: '3Y CAGR', value: fmt(sf.cagr_3y) + '%', cls: sf.cagr_3y > 12 ? 'good' : sf.cagr_3y < 6 ? 'bad' : '' });
+  if (sf.cagr_5y !== null && sf.cagr_5y !== undefined)
+    metrics.push({ label: '5Y CAGR', value: fmt(sf.cagr_5y) + '%', cls: sf.cagr_5y > 12 ? 'good' : sf.cagr_5y < 8 ? 'bad' : '' });
+  if (sf.expense_ratio !== null && sf.expense_ratio !== undefined)
+    metrics.push({ label: 'Expense Ratio', value: fmt(sf.expense_ratio, 2) + '%', cls: sf.expense_ratio < 0.5 ? 'good' : sf.expense_ratio > 1.5 ? 'warn' : '' });
+  if (sf.sharpe_ratio_3y !== null && sf.sharpe_ratio_3y !== undefined)
+    metrics.push({ label: 'Sharpe (3Y)', value: fmt(sf.sharpe_ratio_3y, 2), cls: sf.sharpe_ratio_3y > 0.8 ? 'good' : sf.sharpe_ratio_3y < 0 ? 'bad' : '' });
+  if (sf.max_drawdown !== null && sf.max_drawdown !== undefined)
+    metrics.push({ label: 'Max Drawdown', value: fmt(sf.max_drawdown) + '%', cls: Math.abs(sf.max_drawdown) < 10 ? 'good' : Math.abs(sf.max_drawdown) > 25 ? 'bad' : '' });
+  if (sf.aum_cr !== null && sf.aum_cr !== undefined)
+    metrics.push({ label: 'AUM (Cr)', value: '₹' + fmt(sf.aum_cr, 0) });
+  if (sf.risk_level)
+    metrics.push({ label: 'Risk Level', value: sf.risk_level });
+  if (sf.investment_objective)
+    metrics.push({ label: 'Objective', value: sf.investment_objective });
+
+  return metrics;
+}
+
+function gatherTradeoffs(data) {
+  const notes = [];
+  if (data.tradeoffs && Array.isArray(data.tradeoffs)) {
+    data.tradeoffs.forEach(t => {
+      if (typeof t === 'string') notes.push(t);
+      else if (t.note) notes.push(t.note);
+      else if (t.description) notes.push(t.description);
+    });
+  }
+  // Fallback: use LLM tradeoff_notes if available
+  return notes;
+}
+
+/* ── Utility ─────────────────────────────────────────────────────── */
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+</script>
+</body>
+</html>

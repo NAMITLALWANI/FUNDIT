@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     log_json: bool = Field(default=False, description="Emit JSON-lines structured logs")
     api_host: str = Field(default="0.0.0.0", description="API server host")
     api_port: int = Field(default=8000, description="API server port")
+    # CORS — comma-separated list of allowed origins; empty = localhost only (dev)
+    allowed_origins: str = Field(
+        default="",
+        description="Comma-separated CORS origin whitelist (e.g. https://myapp.com). Empty = localhost only.",
+    )
     preload_models_on_startup: bool = Field(
         default=False,
         description="Load embedding and reranker models during startup instead of on first request",
@@ -122,7 +127,7 @@ class Settings(BaseSettings):
     )
     gemini_api_key: Optional[str] = Field(default=None, description="Google Gemini API key")
     gemini_model: str = Field(
-        default="gemini-3.8-flash", description="Gemini model identifier (configurable, not pinned)"
+        default="gemini-2.5-flash", description="Gemini model identifier (configurable, not pinned)"
     )
     llm_temperature: float = Field(default=0.1, description="LLM sampling temperature")
     llm_timeout_seconds: float = Field(default=30.0, description="Timeout for LLM provider calls")

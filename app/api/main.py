@@ -10,12 +10,14 @@ Startup sequence:
   6. Instantiate DecisionWorkflow and register it in ServiceContainer.
 """
 
+import os
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.decisions import router as decisions_router
@@ -146,24 +148,54 @@ def create_app() -> FastAPI:
     settings = get_settings()
 
     app = FastAPI(
-        title="AI Decision Engine V2 — Evidence-Driven Mutual Fund Decision Support",
+        title="FUNDIT — AI Mutual Fund Decision Engine",
         description=(
-            "Deterministic-first mutual fund decision support system. "
-            "Accepts natural-language investment queries; returns structured recommendations "
-            "backed by SQL-filtered candidates, hybrid RAG evidence, and grounded generation. "
-            "Decisions are always made deterministically; Gemini explains — not decides."
+            "FUNDIT: evidence-driven mutual fund decision support. "
+            "Natural-language queries → SQL candidate filtering → Hybrid RAG retrieval → "
+            "Cross-encoder reranking → Deterministic scoring → Confidence gating → "
+            "Grounded Gemini explanation. Gemini explains — never ranks."
         ),
         version="2.0.0",
         lifespan=lifespan,
     )
 
+    # ── CORS ────────────────────────────────────────────────────────────
+    # In production set ALLOWED_ORIGINS env var to your actual frontend origin.
+    # Falls back to same-origin only when ALLOWED_ORIGINS is not set.
+    raw_origins = settings.allowed_origins
+    allow_origins: list[str] = (
+        [o.strip() for o in raw_origins.split(",") if o.strip()]
+        if raw_origins
+        else []
+    )
+    # If the static frontend is bundled in-process (same origin) we still
+    # allow cross-origin requests from localhost ports for local dev.
+    if not allow_origins:
+        allow_origins = [
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+            "http://localhost:3000",
+        ]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=allow_origins,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type", "Accept"],
     )
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+    # ── Request size guard (32 KB) ───────────────────────────────────
+    @app.middleware("http")
+    async def limit_request_size(request: Request, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > 32_768:
+            return JSONResponse(
+                status_code=413,
+                content={"error": {"code": "REQUEST_TOO_LARGE", "message": "Request body exceeds 32 KB limit."}},
+            )
+        return await call_next(request)
 
     @app.exception_handler(AppError)
     async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
@@ -183,11 +215,16 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(decisions_router)
 
-    # Serve static UI files if they exist
-    import os
+    # ── Static UI ───────────────────────────────────────────────────
     static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
     if os.path.isdir(static_dir):
+        # Serve the SPA root
+        @app.get("/", include_in_schema=False)
+        async def serve_ui():
+            return FileResponse(os.path.join(static_dir, "index.html"))
+
         app.mount("/static", StaticFiles(directory=static_dir), name="static")
+        logger.info("Static UI mounted from %s", static_dir)
 
     return app
 

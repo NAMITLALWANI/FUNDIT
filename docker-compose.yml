@@ -1,7 +1,19 @@
+# ─────────────────────────────────────────────────────────────
+#  FUNDIT — Docker Compose (full stack)
+#  Runs: FastAPI app + Qdrant vector store
+#
+#  Usage:
+#    cp .env.example .env     # fill in GEMINI_API_KEY etc.
+#    docker compose up -d
+#    open http://localhost:8000
+# ─────────────────────────────────────────────────────────────
+
 services:
+
+  # ── Qdrant vector store ─────────────────────────────────────
   qdrant:
     image: qdrant/qdrant:v1.12.0
-    container_name: ai_decision_engine_qdrant
+    container_name: fundit_qdrant
     ports:
       - "6333:6333"
       - "6334:6334"
@@ -11,10 +23,51 @@ services:
       - QDRANT__SERVICE__GRPC_PORT=6334
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333 && echo -e \"GET /healthz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q \"200 OK\"'"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:6333/healthz || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+
+  # ── FUNDIT FastAPI application ───────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PREDOWNLOAD_MODELS: "true"
+    container_name: fundit_app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override Qdrant URL to point to the compose service
+      - QDRANT_URL=http://qdrant:6333
+      # Disable in-memory fallback in production
+      - QDRANT_FALLBACK_IN_MEMORY=false
+      # Preload models at startup for predictable latency
+      - PRELOAD_MODELS_ON_STARTUP=true
+      - APP_ENV=production
+      - LOG_JSON=true
+    volumes:
+      # Persist SQLite database between container restarts
+      - app_data:/app/data/processed
+      # Optional: mount a HuggingFace model cache volume to avoid re-downloading
+      # - hf_cache:/root/.cache/huggingface
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      interval: 20s
+      timeout: 8s
+      retries: 4
+      start_period: 90s
 
 volumes:
   qdrant_data:
+    driver: local
+  app_data:
+    driver: local

@@ -1,36 +1,68 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12-slim
+# ─────────────────────────────────────────────────────────────
+#  FUNDIT — AI Mutual Fund Decision Engine
+#  Production Dockerfile
+# ─────────────────────────────────────────────────────────────
+
+FROM python:3.12-slim AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PORT=8000
 
 WORKDIR /app
 
-# Install system dependencies
+# ── System dependencies ─────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# ── Python dependencies ─────────────────────────────────────
+# Copy only requirements first so this layer is cached unless deps change
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source and data
-COPY app/ app/
-COPY data/ data/
-COPY scripts/ scripts/
-COPY README.md .
+# Pre-download embedding + reranker models into the image so the container
+# does not need outbound internet access at runtime.
+# Skip if you want smaller images and will rely on HuggingFace cache mounted as a volume.
+ARG PREDOWNLOAD_MODELS=true
+RUN if [ "$PREDOWNLOAD_MODELS" = "true" ]; then \
+      python -c "\
+from sentence_transformers import SentenceTransformer, CrossEncoder; \
+SentenceTransformer('BAAI/bge-small-en-v1.5', device='cpu'); \
+CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2', device='cpu'); \
+print('Models downloaded.')"; \
+    fi
+
+# ── Application source ───────────────────────────────────────
+COPY app/      app/
+COPY data/     data/
+COPY scripts/  scripts/
+COPY main.py   .
 COPY pyproject.toml .
 
-# Expose API port
+# ── Non-root user ────────────────────────────────────────────
+RUN useradd --create-home --shell /bin/bash fundit && \
+    chown -R fundit:fundit /app
+USER fundit
+
+# ── Ports ────────────────────────────────────────────────────
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+# ── Healthcheck ───────────────────────────────────────────────
+HEALTHCHECK --interval=20s --timeout=8s --start-period=60s --retries=4 \
+    CMD curl -sf http://localhost:8000/health | python3 -c \
+        "import sys,json; d=json.load(sys.stdin); sys.exit(0 if d.get('status')=='ok' else 1)" \
+    || exit 1
 
-# Start FastAPI application
-CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# ── Entrypoint ────────────────────────────────────────────────
+# Production: no --reload; workers=1 for small demo deployment
+CMD ["uvicorn", "app.api.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "1", \
+     "--log-level", "info", \
+     "--no-access-log"]

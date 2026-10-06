@@ -1,0 +1,46 @@
+# Git and Python
+.git
+.gitignore
+.github
+__pycache__
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv
+venv
+env
+
+# IDE / editor
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Secrets — NEVER bake into image
+.env
+*.local.env
+
+# Generated artifacts that should not be in the image
+# (the app rebuilds the index on startup from data/raw/)
+data/processed/embeddings_cache.npz
+data/processed/*.db
+
+# Development-only docs
+docs/
+*.md
+tests/
+requirements-dev.txt
+scripts/fetch_fund_data.py
+
+# Junie / agent plans
+.junie/
