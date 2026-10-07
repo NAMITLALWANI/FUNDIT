@@ -6,10 +6,10 @@
 
 <video src="assets/demo.mov" width="100%" controls autoplay loop></video>
 
-### 🟢 Normal Recommendation UI
+**Normal Recommendation UI**
 ![Normal Recommendation](assets/normal_recommendation.png)
 
-### 🔴 Constraint Violation & Abstention UI
+**Constraint Violation & Abstention UI**
 ![Abstention Case](assets/abstention_case.png)
 
 ---
@@ -30,7 +30,7 @@ Just ask a natural-language investment question, and FUNDIT will do the heavy li
 
 **This isn't your average AI chatbot.** We never let the AI blindly rank funds. Instead, a strict, deterministic engine crunches the numbers and makes the decision. Gemini is simply there to explain the final result in plain English.
 
-> ⚠ **Disclaimer:** FUNDIT is a decision-support and research tool. It provides analysis based on historical data and publicly available scheme documents. Past performance does not guarantee future results. Mutual fund investments are subject to market risks. This is not personalized financial advice. Always consult a SEBI-registered financial advisor before investing.
+> **Disclaimer:** FUNDIT is a decision-support and research tool. It provides analysis based on historical data and publicly available scheme documents. Past performance does not guarantee future results. Mutual fund investments are subject to market risks. This is not personalized financial advice. Always consult a SEBI-registered financial advisor before investing.
 
 ---
 
