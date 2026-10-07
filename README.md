@@ -2,20 +2,23 @@
 
 [![CI](https://github.com/NAMITLALWANI/FUNDIT/actions/workflows/pytest.yml/badge.svg)](https://github.com/NAMITLALWANI/FUNDIT/actions/workflows/pytest.yml)
 
-> Evidence-driven mutual fund decision support using Hybrid RAG, deterministic scoring, and Gemini-powered explanations.
+> An intelligent, evidence-based mutual fund assistant that uses Hybrid RAG and deterministic scoring to give you safe, grounded financial insights.
 
-*[Demo Video - Coming Soon]*
+<video src="assets/demo.mov" width="100%" controls autoplay loop></video>
 
-*[Screenshot Placeholder: Normal Recommendation]*
-*[Screenshot Placeholder: Abstention Case]*
+### 🟢 Normal Recommendation UI
+![Normal Recommendation](assets/normal_recommendation.png)
+
+### 🔴 Constraint Violation & Abstention UI
+![Abstention Case](assets/abstention_case.png)
 
 ---
 
 ## What Is This?
 
-**FUNDIT** is a demo-ready decision-support system for Indian mutual fund analysis.
+**FUNDIT** is a demo-ready decision-support system designed to make analyzing Indian mutual funds easier and safer.
 
-You ask a natural-language investment question. FUNDIT:
+Just ask a natural-language investment question, and FUNDIT will do the heavy lifting:
 
 1. Parses your intent, constraints, and preferences
 2. Filters candidate funds from a structured SQL database
@@ -25,20 +28,20 @@ You ask a natural-language investment question. FUNDIT:
 6. Asks Gemini to *explain* — not decide — the already-computed result
 7. Returns a fully grounded, cited, structured response
 
-**This is not a chatbot.** Gemini never ranks funds. The deterministic engine decides; Gemini explains.
+**This isn't your average AI chatbot.** We never let the AI blindly rank funds. Instead, a strict, deterministic engine crunches the numbers and makes the decision. Gemini is simply there to explain the final result in plain English.
 
 > ⚠ **Disclaimer:** FUNDIT is a decision-support and research tool. It provides analysis based on historical data and publicly available scheme documents. Past performance does not guarantee future results. Mutual fund investments are subject to market risks. This is not personalized financial advice. Always consult a SEBI-registered financial advisor before investing.
 
 ---
 
-## Problem Statement
+## Why Did I Build This?
 
-Most "AI for investing" demos either:
-- Chain-of-thought with an LLM to pick funds (hallucination risk, no grounding)
-- Build generic RAG over documents without structured candidate filtering
-- Use LLMs for ranking, creating unreliable, non-auditable decisions
+Most "AI for investing" demos out there have a few big problems:
+- They use an LLM to guess which funds are best (high hallucination risk, no grounding).
+- They use generic RAG over documents without any structured database filtering.
+- Their decisions can't be audited because the AI's logic is a black box.
 
-FUNDIT solves this with a **deterministic-first architecture** where the AI engine never trusts LLM judgment for ranking. Every ranking decision is auditable, reproducible, and explainable.
+FUNDIT solves this with a **deterministic-first architecture**. The AI engine never trusts LLM judgment for ranking. Every single ranking decision is auditable, reproducible, and explainable.
 
 ---
 
