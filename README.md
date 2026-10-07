@@ -1,12 +1,19 @@
-# FUNDIT — AI Mutual Fund Decision Engine
+# FUNDIT
+
+[![CI](https://github.com/NAMITLALWANI/FUNDIT/actions/workflows/pytest.yml/badge.svg)](https://github.com/NAMITLALWANI/FUNDIT/actions/workflows/pytest.yml)
 
 > Evidence-driven mutual fund decision support using Hybrid RAG, deterministic scoring, and Gemini-powered explanations.
+
+*[Demo Video - Coming Soon]*
+
+*[Screenshot Placeholder: Normal Recommendation]*
+*[Screenshot Placeholder: Abstention Case]*
 
 ---
 
 ## What Is This?
 
-**FUNDIT** is a production-grade AI decision-support system for Indian mutual fund analysis.
+**FUNDIT** is a demo-ready decision-support system for Indian mutual fund analysis.
 
 You ask a natural-language investment question. FUNDIT:
 
@@ -148,7 +155,7 @@ Evaluated on a 6-query genuine mutual-fund benchmark grounded in the actual data
 | NDCG@5 | **1.0000** |
 | Constraint Faithfulness | 91.67% |
 
-> Citation coverage was measured using MockProvider in offline evaluation. Production Gemini citation quality may vary.
+> Note: The benchmark and citation coverage were measured using a mock LLM (MockProvider) in offline evaluation, not Gemini. Therefore, these benchmark numbers describe the deterministic engine's performance, not Gemini's measured explanation quality.
 
 Run the benchmark yourself:
 ```bash
@@ -185,7 +192,7 @@ python scripts/evaluate.py
 
 ```bash
 git clone <repo-url>
-cd AI-DECISION-ENGINE\ V2
+cd FUNDIT
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -399,4 +406,4 @@ pytest tests/ -v
 
 ---
 
-*FUNDIT is a portfolio project demonstrating production-grade ML/AI engineering. It is not affiliated with AMFI, SEBI, or any fund house.*
+*FUNDIT is a portfolio project. It is not affiliated with AMFI, SEBI, or any fund house.*
